@@ -3,12 +3,10 @@ def soma():
     num2 = float(input("Segundo número: "))
     print("Resultado:", num1 + num2)
 
-
 def subtracao():
     num1 = float(input("Primeiro número: "))
     num2 = float(input("Segundo número: "))
     print("Resultado:", num1 - num2)
-
 
 def divisao():
     num1 = float(input("Dividendo: "))
@@ -18,17 +16,14 @@ def divisao():
     else:
         print("Resultado:", num1 / num2)
 
-
 def multiplicacao():
     num1 = float(input("Primeiro número: "))
     num2 = float(input("Segundo número: "))
     print("Resultado:", num1 * num2)
 
-
 def potencia_quadrado():
     num = float(input("Número: "))
     print("Resultado:", num ** 2)
-
 
 def soma_ilimitada():
     total = 0
@@ -46,7 +41,6 @@ def soma_ilimitada():
             break
     print(f'O resultado final da soma ilimitada é {total}')
 
-
 def bhaskara():
     a = float(input("a: "))
     b = float(input("b: "))
@@ -60,21 +54,18 @@ def bhaskara():
         x2 = (-b - delta ** 0.5) / (2 * a)
         print(f"Raízes: {x1} e {x2}")
 
-
 def conjuntos():
     set1 = input("Primeiro conjunto (elementos separados por vírgula): ").split(',')
     set1 = [item.strip() for item in set1]
     set2 = input("Segundo conjunto (elementos separados por vírgula): ").split(',')
     set2 = [item.strip() for item in set2]
 
-    # União
     uniao = []
     for item in set1 + set2:
         if item not in uniao:
             uniao.append(item)
     print("União:", uniao)
 
-    # Intersecção
     intersecao = []
     for item in set1:
         if item in set2 and item not in intersecao:
@@ -87,7 +78,7 @@ def raiz_quadrada():
     if num < 0:
         print("Número inválido!")
     else:
-        print("Raiz quadrada:", num ** 0.5)
+        print(f"Raiz quadrada:{num ** 0.5:.2f}")
 
 
 def escolha():
@@ -105,7 +96,6 @@ def escolha():
         else:
             print("Entrada inválida. Digite um número válido.")
 
-
 def porcentagem():
     print("Escolha um cálculo de porcentagem:")
     print("1. Desconto")
@@ -122,22 +112,17 @@ def porcentagem():
     else:
         print("Opção inválida.")
 
-
 def calcular_desconto(valor, porcentagem):
     return valor - (valor * porcentagem / 100)
-
 
 def calcular_acrescimo(valor, porcentagem):
     return valor + (valor * porcentagem / 100)
 
-
 def regra_de_tres_normal(a, b, c):
     return (b * c) / a
 
-
 def regra_de_tres_inversa(a, b, c):
     return (a * b) / c
-
 
 def funcao_linear():
     a = float(input("Coeficiente angular (a): "))
@@ -176,7 +161,6 @@ def equacoes_lineares():
     y = (a * f - e * c) / det
     print(f"Solução: x = {x}, y = {y}")
 
-
 def main():
     opcao = 0
     while not opcao == 1:
@@ -198,6 +182,13 @@ def main():
         escolha = input("\nEscolha uma opção: ")
 
         if escolha == '0':
+            print("/////////////////////\n\
+Desenvolvido por:\n\
+EDUARDO JUAN\n\
+LUCCA VIEIRA\n\
+GABRIEL COELHO\n\
+LEONARDO FISCHER\n\
+/////////////////////")
             input("Pressione qualquer tecla para fechar...")
             break
         elif escolha == '1':
@@ -244,7 +235,6 @@ def main():
             print("Opção inválida!")
 
         input("\nPressione Enter para continuar...")
-
 
 if __name__ == "__main__":
     main()
