@@ -1,0 +1,137 @@
+{
+  "admin": {
+    "password": "pbkdf2$200000$75SbATSGt6GxL95EDtCC7A==$BAA5kB9GSV4AQWgo8vpn4P36rWPatbxt5rkoi8zFNW8=",
+    "role": "admin",
+    "email": null,
+    "email_verified": false,
+    "preferences": {
+      "dark_mode": true
+    },
+    "last_login": "2025-10-27T20:22:10.737160",
+    "login_time": 1761607330.737184,
+    "total_time": 1634.038465976715,
+    "foto_perfil": "uploads/perfil/admin.png"
+  },
+  "ninguem": {
+    "password": "pbkdf2$200000$c8Sc66qD/rvRh3bWC2lthw==$2bv7s51iqeO17ZPmyGxNaXMjex5mBi0t7IWh1HVWp9U=",
+    "role": "professor",
+    "email": null,
+    "email_verified": false,
+    "secret_question": null,
+    "secret_answer": null,
+    "preferences": {},
+    "status": "approved",
+    "created_at": "2025-10-20T21:16:22.633447",
+    "last_login": null,
+    "login_time": null,
+    "total_time": 0,
+    "turno": "matutino",
+    "subjects": [
+      "2"
+    ]
+  },
+  "joao": {
+    "password": "pbkdf2$200000$ax6hPugtV/JMmdxyfXEwQQ==$ep/RvtQNpH/+UAiIjJEFidLjeNmLIdirpuVZ0Qb2qA0=",
+    "role": "aluno",
+    "email": null,
+    "email_verified": false,
+    "secret_question": null,
+    "secret_answer": null,
+    "preferences": {},
+    "status": "approved",
+    "created_at": "2025-10-20T21:17:10.590726",
+    "last_login": null,
+    "login_time": null,
+    "total_time": 0,
+    "turno": "matutino",
+    "matricula": 20250001
+  },
+  "danilo": {
+    "password": "pbkdf2$200000$+orLu6sFNnu8XQlo4asP6g==$nJi4g+/w6XkQU6dAk1VB28p0+wQEus6l1hJcIvJYl68=",
+    "role": "professor",
+    "email": null,
+    "email_verified": false,
+    "secret_question": null,
+    "secret_answer": null,
+    "preferences": {},
+    "status": "approved",
+    "created_at": "2025-10-20T21:18:04.562185",
+    "last_login": null,
+    "login_time": null,
+    "total_time": 0,
+    "turno": "matutino",
+    "subjects": [
+      "4"
+    ]
+  },
+  "123": {
+    "password": "pbkdf2$200000$M9kJGmZy1trpYtow5cqa+Q==$/lLkrmXl2XKzrJSIotzbFc2LSzRbozX/iGeypDn2f88=",
+    "role": "professor",
+    "email": null,
+    "email_verified": false,
+    "secret_question": null,
+    "secret_answer": null,
+    "preferences": {},
+    "status": "approved",
+    "created_at": "2025-10-20T21:37:18.453336",
+    "last_login": null,
+    "login_time": null,
+    "total_time": 0,
+    "turno": "matutino",
+    "subjects": [
+      "1"
+    ]
+  },
+  "admin1": {
+    "password": "pbkdf2$200000$NESjnyKWRF+XDAIgoZxZ3A==$IogC06gJF7d+MB9tloKZagVwsSVS6nuOB9otrB7TTbQ=",
+    "role": "professor",
+    "email": null,
+    "email_verified": false,
+    "secret_question": null,
+    "secret_answer": null,
+    "preferences": {},
+    "status": "approved",
+    "created_at": "2025-10-27T19:41:39.609321",
+    "last_login": null,
+    "login_time": null,
+    "total_time": 0,
+    "turno": "matutino",
+    "subjects": [
+      "2"
+    ]
+  },
+  "1231": {
+    "password": "pbkdf2$200000$l0ts+RpOYsg3QPOqMJB5Fw==$NKnrjSm9eDWgjKxflVadZA6+sWgPQxpAtMlrH5wZEpM=",
+    "role": "professor",
+    "email": null,
+    "email_verified": false,
+    "secret_question": null,
+    "secret_answer": null,
+    "preferences": {},
+    "status": "approved",
+    "created_at": "2025-10-27T19:51:22.467015",
+    "last_login": null,
+    "login_time": null,
+    "total_time": 0,
+    "turno": "matutino",
+    "subjects": [
+      "1"
+    ]
+  },
+  "danilo1": {
+    "password": "pbkdf2$200000$QH9qsZXi+QtZVtRFfI5oAg==$xCf0cswu/kyEpInvU8esySYN0LvGZNSC03LTTTf75nY=",
+    "role": "aluno",
+    "email": null,
+    "email_verified": false,
+    "secret_question": null,
+    "secret_answer": null,
+    "preferences": {},
+    "status": "approved",
+    "created_at": "2025-10-27T19:52:48.774495",
+    "last_login": null,
+    "login_time": null,
+    "total_time": 0,
+    "turno": "matutino",
+    "matricula": 20250003
+  }
+}
