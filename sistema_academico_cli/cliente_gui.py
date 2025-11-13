@@ -990,8 +990,8 @@ def run_server():
     while True:
         conn, addr = server.accept(); threading.Thread(target=handle_client, args=(conn, addr), daemon=True).start()
 
-HOST, PORT = '10.101.108.58', 65432
-
+HOST, PORT = '127.0.0.1', 65432
+#Alterar o host para o do servidor
 # ==============================================================================
 # FUNÇÕES AUXILIARES PARA COMUNICAÇÃO COM O SERVIDOR VIA SOCKET
 # ==============================================================================
