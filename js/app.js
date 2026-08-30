@@ -129,24 +129,24 @@
     const host = location.hostname;
     const local = host === "localhost" || host === "127.0.0.1";
     if (location.protocol === "https:") {
-      els.secSite.textContent = "Site protegido (HTTPS)";
+      els.secSite.textContent = "Dados criptografados";
       els.secSite.className = "sec-badge is-ok";
     } else if (local) {
-      els.secSite.textContent = "Site local neste computador";
+      els.secSite.textContent = "Dados neste computador";
       els.secSite.className = "sec-badge is-warn";
     } else {
-      els.secSite.textContent = "Site sem HTTPS";
+      els.secSite.textContent = "Dados sem criptografia";
       els.secSite.className = "sec-badge is-bad";
     }
 
     if (demoMode) {
-      els.secUser.textContent = "Usuário em demonstração";
+      els.secUser.textContent = "Banco local (demonstração)";
       els.secUser.className = "sec-badge is-warn";
     } else if (currentUser) {
-      els.secUser.textContent = "Usuário autenticado";
+      els.secUser.textContent = "Banco de dados conectado";
       els.secUser.className = "sec-badge is-ok";
     } else {
-      els.secUser.textContent = "Sem sessão";
+      els.secUser.textContent = "Banco de dados desconectado";
       els.secUser.className = "sec-badge is-bad";
     }
 
@@ -448,11 +448,11 @@
       });
 
     if (!allUserTransactions.length) {
-      setDbInfo("ok", "Banco conectado");
+      setDbInfo("ok", "Nenhum lançamento neste mês");
     } else if (!transactions.length) {
-      setDbInfo("ok", `${allUserTransactions.length} no banco`);
+      setDbInfo("ok", `${allUserTransactions.length} ${allUserTransactions.length === 1 ? "lançamento no banco" : "lançamentos no banco"}`);
     } else {
-      setDbInfo("ok", `${transactions.length} neste mês`);
+      setDbInfo("ok", `${transactions.length} ${transactions.length === 1 ? "lançamento neste mês" : "lançamentos neste mês"}`);
     }
     renderApp();
   }
