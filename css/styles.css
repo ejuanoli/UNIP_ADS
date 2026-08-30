@@ -338,9 +338,28 @@ select:focus {
 .topbar-end {
   display: flex;
   align-items: center;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   justify-content: flex-end;
   gap: 8px;
+  flex-shrink: 0;
+}
+
+.topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.header-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.header-action-icon {
+  display: none;
 }
 
 .sec-indicators {
@@ -563,14 +582,6 @@ select:focus {
 
 .logo-mark svg {
   display: block;
-}
-
-.topbar-end {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  justify-content: flex-end;
-  gap: 8px;
 }
 
 .month-nav {
@@ -984,15 +995,51 @@ select:focus {
   }
 
   .topbar-inner {
-    flex-wrap: wrap;
-    gap: 6px;
+    flex-wrap: nowrap;
+    gap: 8px;
     padding-top: 8px;
     padding-bottom: 8px;
   }
 
+  .brand-lockup {
+    min-width: 0;
+  }
+
+  .brand-lockup > div {
+    min-width: 0;
+    overflow: hidden;
+  }
+
+  .brand-lockup > div span {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
   .topbar-end {
-    width: 100%;
-    justify-content: flex-start;
+    width: auto;
+    justify-content: flex-end;
+  }
+
+  .sec-indicators {
+    display: none;
+  }
+
+  .header-action-label {
+    display: none;
+  }
+
+  .header-action-icon {
+    display: block;
+  }
+
+  .header-action {
+    width: 40px;
+    min-width: 40px;
+    min-height: 40px;
+    padding: 0;
+    border-radius: 10px;
   }
 
   .sec-badge {

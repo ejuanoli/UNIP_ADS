@@ -17,7 +17,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="css/styles.css?v=15" />
+    <link rel="stylesheet" href="css/styles.css?v=16" />
     <style>
       html, body { margin: 0; min-height: 100vh; background: #f4f1eb; }
       .hidden { display: none !important; }
@@ -161,8 +161,20 @@
               <span id="sec-user" class="sec-badge">Segurança do usuário</span>
               <span id="sec-db" class="sec-badge">Banco</span>
             </div>
-            <button type="button" class="btn btn-ghost" id="btn-export">Exportar</button>
-            <button type="button" class="btn btn-soft" id="btn-logout">Sair</button>
+            <div class="topbar-actions">
+              <button type="button" class="header-action btn btn-ghost" id="btn-export" aria-label="Exportar">
+                <svg class="header-action-icon" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+                  <path d="M12 3v12m0 0 4-4m-4 4-4-4M5 21h14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                <span class="header-action-label">Exportar</span>
+              </button>
+              <button type="button" class="header-action btn btn-soft" id="btn-logout" aria-label="Sair">
+                <svg class="header-action-icon" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+                  <path d="M10 7V5a2 2 0 0 1 2-2h7v18h-7a2 2 0 0 1-2-2v-2M4 12h11m0 0-3-3m3 3-3 3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                <span class="header-action-label">Sair</span>
+              </button>
+            </div>
           </div>
         </div>
       </header>
@@ -327,7 +339,7 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4"></script>
-    <script src="js/config.js?v=15"></script>
-    <script src="js/app.js?v=15"></script>
+    <script src="js/config.js?v=16"></script>
+    <script src="js/app.js?v=16"></script>
   </body>
 </html>

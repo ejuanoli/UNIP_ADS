@@ -846,17 +846,20 @@
     });
 
     document.getElementById("btn-logout").addEventListener("click", async () => {
+      currentUser = null;
+      transactions = [];
+      allUserTransactions = [];
       if (demoMode) {
-        currentUser = null;
-        transactions = [];
         showView("auth");
         showAuthTab("login");
         setAuthMessage("Demonstração: entre de novo para continuar olhando o site.");
         return;
       }
-      await supabaseClient.auth.signOut();
-      currentUser = null;
-      transactions = [];
+      try {
+        if (supabaseClient) await supabaseClient.auth.signOut();
+      } catch (err) {
+        console.error(err);
+      }
       showView("auth");
       showAuthTab("login");
     });
