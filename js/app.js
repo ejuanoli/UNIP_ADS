@@ -365,7 +365,11 @@
       .order("occurred_on", { ascending: false })
       .order("created_at", { ascending: false });
 
-    if (error) throw error;
+    if (error) {
+      transactions = [];
+      renderApp();
+      throw new Error(error.message || "Não foi possível ler os lançamentos.");
+    }
     transactions = data || [];
     renderApp();
   }
@@ -629,6 +633,7 @@
     }
     showView("app");
     renderSecurity();
+    renderApp();
     await safeFetch();
   }
 
@@ -938,14 +943,10 @@
       return;
     }
 
-    window.setTimeout(function () {
-      setLoading(false);
-    }, 2500);
+    let openedFor = "";
 
-    supabaseClient.auth.onAuthStateChange(async (event, session) => {
-      if (event === "TOKEN_REFRESHED" || event === "USER_UPDATED") return;
-
-      if (event === "SIGNED_OUT" || (event === "INITIAL_SESSION" && !session?.user)) {
+    async function openSession(user) {
+      if (!user) {
         currentUser = null;
         transactions = [];
         showView("auth");
@@ -953,39 +954,35 @@
         setLoading(false);
         return;
       }
-
-      if (!session?.user) {
+      if (openedFor === user.id && currentUser && currentUser.id === user.id) {
         setLoading(false);
+        if (!transactions.length) await safeFetch();
         return;
       }
-
-      showView("app");
+      openedFor = user.id;
       setLoading(false);
-      try {
-        await enterApp(session.user);
-      } catch (err) {
-        const msg = err.message || "Erro ao abrir sua conta.";
-        toast(msg.includes("relation") ? "Execute o arquivo sql/schema.sql no Supabase." : msg);
-        showView("auth");
-        showAuthTab("login");
+      await enterApp(user);
+    }
+
+    supabaseClient.auth.onAuthStateChange(async (event, session) => {
+      if (event === "SIGNED_OUT") {
+        openedFor = "";
+        await openSession(null);
+        return;
+      }
+      if (event === "TOKEN_REFRESHED" || event === "USER_UPDATED") return;
+      if (session && session.user) {
+        await openSession(session.user);
+        return;
+      }
+      if (event === "INITIAL_SESSION") {
+        await openSession(null);
       }
     });
 
     try {
-      const { data } = await Promise.race([
-        supabaseClient.auth.getSession(),
-        new Promise(function (resolve) {
-          setTimeout(function () {
-            resolve({ data: { session: null } });
-          }, 2000);
-        })
-      ]);
-      if (data && data.session && data.session.user) {
-        showView("app");
-      } else {
-        showView("auth");
-        showAuthTab("login");
-      }
+      const { data } = await supabaseClient.auth.getSession();
+      await openSession(data && data.session ? data.session.user : null);
     } catch (err) {
       showView("auth");
       showAuthTab("login");

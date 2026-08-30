@@ -308,10 +308,10 @@ select:focus {
 .topbar-inner,
 .app,
 .site-footer-inner {
-  width: min(1600px, calc(100% - 40px));
-  max-width: none;
+  width: calc(100% - 48px);
+  max-width: 1760px;
   margin: 0 auto;
-  padding: 14px 0;
+  padding: 16px 0;
 }
 
 .topbar-inner {
@@ -636,10 +636,6 @@ select:focus {
   align-items: start;
 }
 
-.panel-main {
-  min-height: 520px;
-}
-
 .side {
   display: grid;
   gap: 12px;
@@ -650,7 +646,7 @@ select:focus {
 }
 
 .panel-main {
-  min-height: 520px;
+  min-height: 280px;
 }
 
 .panel-head {
