@@ -47,7 +47,7 @@
   ];
 
   const DEMO_STORE = "finora-demo-v1";
-  const LIST_PREVIEW = 5;
+  const LIST_PREVIEW = 8;
 
   const els = {
     loading: document.getElementById("loading"),
@@ -626,17 +626,14 @@
       meta.textContent = t.category;
       info.append(title, meta);
 
-      const right = document.createElement("span");
-      right.className = "tx-right";
       const dateEl = document.createElement("small");
       dateEl.className = "tx-date";
       dateEl.textContent = formatShortDate(dayKey);
       const value = document.createElement("strong");
       value.className = t.type === "income" ? "is-income" : "is-expense";
       value.textContent = `${t.type === "income" ? "+" : "−"} ${formatBRL(t.amount)}`;
-      right.append(dateEl, value);
 
-      btn.append(icon, info, right);
+      btn.append(icon, info, dateEl, value);
       container.appendChild(btn);
     });
   }

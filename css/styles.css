@@ -70,6 +70,12 @@ a {
   min-height: 100vh;
 }
 
+#view-app {
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+}
+
 #view-setup {
   overflow: auto;
 }
@@ -346,10 +352,10 @@ select:focus {
 .topbar-inner,
 .app,
 .site-footer-inner {
-  width: calc(100% - 48px);
-  max-width: 1760px;
+  width: calc(100% - 32px);
+  max-width: none;
   margin: 0 auto;
-  padding: 10px 0;
+  padding: 8px 0;
 }
 
 .app {
@@ -360,9 +366,9 @@ select:focus {
 }
 
 .topbar-inner {
-  display: flex;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
   align-items: center;
-  justify-content: space-between;
   gap: 16px;
 }
 
@@ -397,10 +403,11 @@ select:focus {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
-  width: calc(100% - 48px);
-  max-width: 1760px;
-  margin: 0 auto;
-  padding: 0 0 10px;
+  width: auto;
+  max-width: none;
+  margin: 0;
+  padding: 0;
+  justify-content: center;
 }
 
 .sec-badge {
@@ -654,15 +661,15 @@ select:focus {
 
 .summary {
   display: grid;
-  grid-template-columns: 1.2fr 1fr 1fr;
+  grid-template-columns: 1fr 1fr 1fr;
   gap: 12px;
   margin-bottom: 12px;
   flex-shrink: 0;
 }
 
 .summary-card {
-  min-height: 96px;
-  padding: 14px 16px;
+  min-height: 0;
+  padding: 16px 20px;
 }
 
 .summary-card p {
@@ -752,6 +759,8 @@ select:focus {
 
 .tx-list {
   min-height: 0;
+  flex: 1;
+  align-content: start;
 }
 
 .tx-more {
@@ -771,15 +780,15 @@ select:focus {
 
 .tx-item {
   display: grid;
-  grid-template-columns: 36px 1fr auto;
-  gap: 10px;
+  grid-template-columns: 36px minmax(0, 1fr) 92px auto;
+  gap: 12px;
   align-items: center;
   width: 100%;
   text-align: left;
   border: 0;
   background: var(--bg);
   border-radius: 12px;
-  padding: 8px 10px;
+  padding: 10px 12px;
   cursor: pointer;
 }
 
@@ -805,15 +814,10 @@ select:focus {
   color: var(--text-muted);
 }
 
-.tx-right {
-  display: grid;
-  justify-items: end;
-  gap: 2px;
-}
-
 .tx-date {
-  font-size: 0.75rem;
+  font-size: 0.8rem;
   font-weight: 500;
+  text-align: right;
 }
 
 .empty {
@@ -951,8 +955,8 @@ body.modal-open .fab {
 
 .site-footer {
   flex-shrink: 0;
-  margin-top: auto;
-  padding: 8px 0 0;
+  margin-top: 0;
+  padding: 6px 0 0;
   border-top: 1px solid var(--border);
   background: var(--surface);
 }
@@ -1069,8 +1073,13 @@ body.modal-open .fab {
     padding-right: 0;
   }
 
+  #view-app {
+    height: auto;
+    overflow: visible;
+  }
+
   .topbar-inner {
-    flex-wrap: nowrap;
+    grid-template-columns: 1fr auto;
     gap: 8px;
     padding-top: 8px;
     padding-bottom: 8px;
@@ -1098,10 +1107,16 @@ body.modal-open .fab {
   }
 
   .sec-indicators {
-    display: flex;
-    width: calc(100% - 28px);
-    padding-bottom: 8px;
+    grid-column: 1 / -1;
+    justify-content: flex-start;
+    width: auto;
+    padding: 0;
     gap: 6px;
+  }
+
+  .tx-item {
+    grid-template-columns: 36px minmax(0, 1fr) 72px auto;
+    gap: 8px;
   }
 
   .sec-badge {
