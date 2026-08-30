@@ -736,14 +736,14 @@
       String((user && user.email) || "Usuário").split("@")[0];
     try {
       currentName = await loadProfile(user);
+      await safeFetch();
+      showView("app");
     } catch (err) {
-      toast(String(err.message || "").includes("relation")
-        ? "Execute o arquivo sql/schema.sql no Supabase para salvar lançamentos."
-        : (err.message || "Perfil incompleto, mas você pode continuar."));
+      toast(err.message || "Não foi possível abrir o painel.");
+      showView("app");
+    } finally {
+      setLoading(false);
     }
-    await safeFetch();
-    showView("app");
-    setLoading(false);
   }
 
   function busy(button, on) {
@@ -1111,9 +1111,35 @@
       }
     });
 
-    try {
+    async function resolveBootUser() {
       const { data } = await supabaseClient.auth.getSession();
-      await finishBoot(data && data.session ? data.session.user : null);
+      if (!data || !data.session || !data.session.user) return null;
+      const check = await supabaseClient.auth.getUser();
+      if (check.error || !check.data || !check.data.user) {
+        try {
+          await supabaseClient.auth.signOut();
+        } catch (err) {
+          /* ignore */
+        }
+        return null;
+      }
+      return check.data.user;
+    }
+
+    setTimeout(function () {
+      if (currentUser) {
+        setLoading(false);
+        return;
+      }
+      booted = true;
+      showView("auth");
+      showAuthTab("login");
+      setLoading(false);
+    }, 5000);
+
+    try {
+      const user = await resolveBootUser();
+      await finishBoot(user);
     } catch (err) {
       if (!booted && !currentUser) {
         showView("auth");
