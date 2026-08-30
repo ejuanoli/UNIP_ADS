@@ -17,7 +17,13 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="css/styles.css" />
+    <link rel="stylesheet" href="css/styles.css?v=14" />
+    <style>
+      html, body { margin: 0; min-height: 100vh; background: #f4f1eb; }
+      .hidden { display: none !important; }
+      .view { display: flex; flex-direction: column; min-height: 100vh; }
+      #view-auth, #view-app { position: static; overflow: visible; }
+    </style>
   </head>
   <body>
     <div id="toast" class="toast" role="status" aria-live="polite"></div>
@@ -46,7 +52,7 @@
     </section>
 
     <!-- Login / cadastro -->
-    <section id="view-auth" class="view hidden">
+    <section id="view-auth" class="view">
       <div class="auth-shell">
         <div class="auth-intro">
           <div class="brand-lockup brand-lockup-lg">
@@ -153,6 +159,7 @@
             <div class="sec-indicators" aria-label="Indicadores de segurança">
               <span id="sec-site" class="sec-badge">Segurança do site</span>
               <span id="sec-user" class="sec-badge">Segurança do usuário</span>
+              <span id="sec-db" class="sec-badge">Banco</span>
             </div>
             <button type="button" class="btn btn-ghost" id="btn-export">Exportar</button>
             <button type="button" class="btn btn-soft" id="btn-logout">Sair</button>
@@ -204,9 +211,8 @@
                 <option value="all">Todas as categorias</option>
               </select>
             </div>
-            <div id="tx-list" class="tx-list">
-              <div class="empty">Carregando lançamentos…</div>
-            </div>
+            <div id="tx-list" class="tx-list"></div>
+            <button type="button" class="link-btn tx-more hidden" id="btn-tx-more">Ver todos os lançamentos</button>
           </section>
 
           <aside class="side">
@@ -290,6 +296,16 @@
       </div>
     </div>
 
+    <div id="modal-list" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="modal-list-title">
+      <div class="modal-card modal-card-wide">
+        <div class="modal-head">
+          <h3 id="modal-list-title">Todos os lançamentos do mês</h3>
+          <button type="button" class="icon-btn" id="btn-close-list" aria-label="Fechar">×</button>
+        </div>
+        <div id="tx-list-full" class="tx-list tx-list-full"></div>
+      </div>
+    </div>
+
     <div id="confirm" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="confirm-title">
       <div class="modal-card modal-card-sm">
         <h3 id="confirm-title">Excluir lançamento?</h3>
@@ -305,13 +321,24 @@
       <p class="lead" style="padding: 24px">Ative o JavaScript para usar o Finora.</p>
     </noscript>
 
-    <div id="loading" class="loading">
+    <div id="loading" class="loading hidden">
       <span class="spinner" aria-hidden="true"></span>
       <p>Carregando…</p>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4"></script>
-    <script src="js/config.js?v=9"></script>
-    <script src="js/app.js?v=9"></script>
+    <script src="js/config.js?v=14"></script>
+    <script src="js/app.js?v=14"></script>
+    <script>
+      setTimeout(function () {
+        var auth = document.getElementById("view-auth");
+        var app = document.getElementById("view-app");
+        var loading = document.getElementById("loading");
+        var authOn = auth && !auth.classList.contains("hidden");
+        var appOn = app && !app.classList.contains("hidden");
+        if (loading) loading.classList.add("hidden");
+        if (!authOn && !appOn && auth) auth.classList.remove("hidden");
+      }, 2000);
+    </script>
   </body>
 </html>

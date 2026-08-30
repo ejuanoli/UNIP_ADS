@@ -29,6 +29,7 @@ alter table public.transactions enable row level security;
 
 revoke all on table public.profiles from anon, public;
 revoke all on table public.transactions from anon, public;
+grant usage on schema public to anon, authenticated;
 grant select, insert, update on table public.profiles to authenticated;
 grant select, insert, update, delete on table public.transactions to authenticated;
 

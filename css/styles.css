@@ -27,7 +27,8 @@
 html,
 body {
   margin: 0;
-  min-height: 100%;
+  min-height: 100vh;
+  background: var(--bg);
 }
 
 body {
@@ -37,7 +38,7 @@ body {
     radial-gradient(900px 420px at 12% -10%, #e7f2ec 0%, transparent 55%),
     radial-gradient(700px 380px at 100% 0%, #f6eadc 0%, transparent 50%),
     var(--bg);
-  line-height: 1.5;
+  line-height: 1.45;
 }
 
 h1,
@@ -64,7 +65,13 @@ a {
 }
 
 .view {
+  display: flex;
+  flex-direction: column;
   min-height: 100vh;
+}
+
+#view-setup {
+  overflow: auto;
 }
 
 .eyebrow,
@@ -79,7 +86,7 @@ a {
 
 .lead {
   color: var(--text-muted);
-  font-size: 1.05rem;
+  font-size: 0.98rem;
   max-width: 36rem;
 }
 
@@ -113,12 +120,14 @@ code {
 /* Auth */
 .auth-shell {
   max-width: 1200px;
+  width: 100%;
   margin: 0 auto;
-  min-height: auto;
+  flex: 1 1 auto;
+  min-height: 240px;
   display: grid;
   align-items: center;
-  gap: 48px;
-  padding: 40px 24px 24px;
+  gap: 32px;
+  padding: 20px 24px 12px;
 }
 
 @media (min-width: 880px) {
@@ -134,9 +143,9 @@ code {
 
 .auth-intro h1,
 .auth-panel h1 {
-  font-size: clamp(2rem, 4vw, 3.1rem);
+  font-size: clamp(1.7rem, 3.4vw, 2.6rem);
   line-height: 1.15;
-  margin-bottom: 12px;
+  margin-bottom: 10px;
 }
 
 .auth-card,
@@ -298,10 +307,9 @@ select:focus {
 
 /* App chrome */
 .topbar {
-  position: sticky;
-  top: 0;
+  flex-shrink: 0;
   z-index: 10;
-  background: rgba(244, 241, 235, 0.86);
+  background: rgba(244, 241, 235, 0.92);
   backdrop-filter: blur(12px);
 }
 
@@ -311,7 +319,13 @@ select:focus {
   width: calc(100% - 48px);
   max-width: 1760px;
   margin: 0 auto;
-  padding: 16px 0;
+  padding: 10px 0;
+}
+
+.app {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
 }
 
 .topbar-inner {
@@ -391,7 +405,7 @@ select:focus {
 }
 
 .brand-lockup-lg {
-  margin-bottom: 18px;
+  margin-bottom: 10px;
 }
 
 .brand-lockup-lg .logo-mark,
@@ -421,8 +435,8 @@ select:focus {
   grid-template-columns: 72px 1fr auto;
   gap: 8px;
   align-items: center;
-  margin: 8px 0;
-  font-size: 0.82rem;
+  margin: 6px 0;
+  font-size: 0.8rem;
 }
 
 .hbar-track {
@@ -563,7 +577,8 @@ select:focus {
   display: flex;
   align-items: center;
   gap: 8px;
-  margin-bottom: 12px;
+  margin-bottom: 8px;
+  flex-shrink: 0;
 }
 
 .month-nav h2 {
@@ -594,7 +609,8 @@ select:focus {
   display: grid;
   grid-template-columns: 1.2fr 1fr 1fr;
   gap: 10px;
-  margin-bottom: 12px;
+  margin-bottom: 8px;
+  flex-shrink: 0;
 }
 
 .summary-card {
@@ -630,23 +646,27 @@ select:focus {
 
 .workspace {
   display: grid;
-  grid-template-columns: minmax(0, 2.2fr) minmax(320px, 0.9fr);
-  gap: 16px;
-  padding-bottom: 16px;
+  grid-template-columns: minmax(0, 2.2fr) minmax(300px, 0.9fr);
+  gap: 12px;
+  padding-bottom: 8px;
   align-items: start;
 }
 
 .side {
   display: grid;
-  gap: 12px;
+  gap: 10px;
+  min-height: 0;
+  grid-template-rows: auto 1fr;
 }
 
 .panel {
-  padding: 14px;
+  padding: 12px;
+  min-height: 0;
 }
 
 .panel-main {
-  min-height: 280px;
+  display: flex;
+  flex-direction: column;
 }
 
 .panel-head {
@@ -654,20 +674,36 @@ select:focus {
   justify-content: space-between;
   align-items: center;
   gap: 12px;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
+  flex-shrink: 0;
+}
+
+.panel-head h3 {
+  font-size: 1.05rem;
 }
 
 .filters {
   display: grid;
   grid-template-columns: 1.4fr 0.8fr 1fr;
   gap: 8px;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
+  flex-shrink: 0;
 }
 
 .tx-list,
 .breakdown {
   display: grid;
-  gap: 8px;
+  gap: 6px;
+}
+
+.tx-list {
+  min-height: 0;
+}
+
+.tx-more {
+  margin-top: 8px;
+  justify-self: start;
+  padding: 0;
 }
 
 .tx-day {
@@ -681,7 +717,7 @@ select:focus {
 
 .tx-item {
   display: grid;
-  grid-template-columns: 40px 1fr auto;
+  grid-template-columns: 36px 1fr auto;
   gap: 10px;
   align-items: center;
   width: 100%;
@@ -689,7 +725,7 @@ select:focus {
   border: 0;
   background: var(--bg);
   border-radius: 12px;
-  padding: 10px;
+  padding: 8px 10px;
   cursor: pointer;
 }
 
@@ -698,13 +734,13 @@ select:focus {
 }
 
 .tx-icon {
-  width: 44px;
-  height: 44px;
-  border-radius: 14px;
+  width: 36px;
+  height: 36px;
+  border-radius: 12px;
   display: grid;
   place-items: center;
   background: #fff;
-  font-size: 1.1rem;
+  font-size: 1rem;
 }
 
 .tx-item b {
@@ -717,9 +753,9 @@ select:focus {
 
 .empty {
   text-align: center;
-  padding: 18px 8px;
+  padding: 10px 8px;
   color: var(--text-muted);
-  font-size: 0.9rem;
+  font-size: 0.85rem;
 }
 
 .bar-row {
@@ -770,6 +806,19 @@ select:focus {
   width: min(380px, 100%);
 }
 
+.modal-card-wide {
+  width: min(720px, 100%);
+  max-height: min(86dvh, 720px);
+  display: flex;
+  flex-direction: column;
+}
+
+.tx-list-full {
+  overflow: auto;
+  min-height: 0;
+  padding-right: 4px;
+}
+
 .modal-head {
   display: flex;
   justify-content: space-between;
@@ -815,33 +864,34 @@ select:focus {
 }
 
 .site-footer {
-  margin-top: 8px;
-  padding: 20px 0 28px;
+  flex-shrink: 0;
+  margin-top: auto;
+  padding: 8px 0 0;
   border-top: 1px solid var(--border);
-  background: rgba(255, 253, 249, 0.7);
+  background: var(--surface);
 }
 
 .site-footer-inner {
-  padding-top: 8px;
-  padding-bottom: 8px;
+  padding-top: 4px;
+  padding-bottom: max(8px, env(safe-area-inset-bottom, 0px));
 }
 
 .site-footer h2 {
-  font-size: 1.05rem;
-  margin-bottom: 8px;
+  font-size: 0.82rem;
+  margin-bottom: 2px;
 }
 
 .site-footer p {
-  margin: 0 0 12px;
+  margin: 0 0 6px;
   color: var(--text-muted);
-  font-size: 0.92rem;
-  max-width: 72rem;
+  font-size: 0.74rem;
+  max-width: 88rem;
 }
 
 .credits {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 8px 16px;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 6px;
   margin: 0;
   padding: 0;
   list-style: none;
@@ -849,16 +899,17 @@ select:focus {
 
 .credits li {
   background: var(--surface);
-  border-radius: 12px;
-  padding: 10px 12px;
+  border-radius: 10px;
+  padding: 6px 8px;
   box-shadow: var(--shadow);
-  font-size: 0.9rem;
+  font-size: 0.75rem;
+  line-height: 1.25;
 }
 
 .credits small {
   display: block;
   color: var(--text-muted);
-  font-size: 0.78rem;
+  font-size: 0.68rem;
 }
 
 .toast {
@@ -907,6 +958,12 @@ select:focus {
   }
 }
 
+@media (max-width: 1100px) {
+  .credits {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
 @media (max-width: 860px) {
   .summary,
   .filters,
@@ -915,7 +972,7 @@ select:focus {
   }
 
   .credits {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .topbar-inner,
@@ -928,7 +985,9 @@ select:focus {
 
   .topbar-inner {
     flex-wrap: wrap;
-    gap: 8px;
+    gap: 6px;
+    padding-top: 8px;
+    padding-bottom: 8px;
   }
 
   .topbar-end {
@@ -937,7 +996,7 @@ select:focus {
   }
 
   .sec-badge {
-    font-size: 0.7rem;
+    font-size: 0.68rem;
     padding: 4px 8px;
   }
 
@@ -965,21 +1024,28 @@ select:focus {
   }
 
   .workspace {
-    padding-bottom: 80px;
+    overflow: hidden;
+    padding-bottom: 8px;
+    grid-template-rows: minmax(0, 1.15fr) minmax(0, 0.85fr);
+  }
+
+  .side {
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: minmax(0, 1fr);
   }
 
   .panel-main {
-    min-height: 280px;
+    min-height: 0;
   }
 
   .tx-item {
-    min-height: 52px;
+    min-height: 44px;
   }
 
   .btn,
   .tab,
   .icon-btn {
-    min-height: 44px;
+    min-height: 40px;
   }
 
   .modal {
@@ -993,7 +1059,31 @@ select:focus {
   }
 
   .auth-shell {
-    padding: 24px 16px 40px;
-    min-height: 100dvh;
+    padding: 16px 16px 8px;
+    gap: 16px;
+    align-content: center;
+  }
+
+  .site-footer p {
+    display: none;
+  }
+}
+
+@media (max-height: 760px) {
+  .auth-intro .lead {
+    display: none;
+  }
+
+  .auth-card,
+  .auth-panel {
+    padding: 18px;
+  }
+
+  .summary-card {
+    padding: 10px 12px;
+  }
+
+  .site-footer p {
+    display: none;
   }
 }

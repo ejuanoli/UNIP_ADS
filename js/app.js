@@ -46,6 +46,9 @@
     "Dezembro"
   ];
 
+  const DEMO_STORE = "finora-demo-v1";
+  const LIST_PREVIEW = 5;
+
   const els = {
     loading: document.getElementById("loading"),
     toast: document.getElementById("toast"),
@@ -58,6 +61,7 @@
     greeting: document.getElementById("greeting"),
     secSite: document.getElementById("sec-site"),
     secUser: document.getElementById("sec-user"),
+    secDb: document.getElementById("sec-db"),
     monthLabel: document.getElementById("month-label"),
     sumBalance: document.getElementById("sum-balance"),
     sumIncome: document.getElementById("sum-income"),
@@ -66,6 +70,9 @@
     sumIncomeCount: document.getElementById("sum-income-count"),
     sumExpenseCount: document.getElementById("sum-expense-count"),
     txList: document.getElementById("tx-list"),
+    txListFull: document.getElementById("tx-list-full"),
+    btnTxMore: document.getElementById("btn-tx-more"),
+    modalList: document.getElementById("modal-list"),
     breakdown: document.getElementById("category-breakdown"),
     chartFlow: document.getElementById("chart-flow"),
     search: document.getElementById("search"),
@@ -92,6 +99,8 @@
   let pendingDeleteId = null;
   let toastTimer = null;
   let demoMode = false;
+  let dbInfo = { kind: "", label: "Banco" };
+  let allUserTransactions = [];
 
   function isConfigured() {
     const cfg = window.APP_CONFIG || {};
@@ -106,13 +115,13 @@
   }
 
   function showView(name) {
-    els.setup.classList.toggle("hidden", name !== "setup");
-    els.auth.classList.toggle("hidden", name !== "auth");
-    els.app.classList.toggle("hidden", name !== "app");
+    if (els.setup) els.setup.classList.toggle("hidden", name !== "setup");
+    if (els.auth) els.auth.classList.toggle("hidden", name !== "auth");
+    if (els.app) els.app.classList.toggle("hidden", name !== "app");
   }
 
   function setLoading(on) {
-    els.loading.classList.toggle("hidden", !on);
+    if (els.loading) els.loading.classList.toggle("hidden", !on);
   }
 
   function renderSecurity() {
@@ -140,9 +149,17 @@
       els.secUser.textContent = "Sem sessão";
       els.secUser.className = "sec-badge is-bad";
     }
+
+    if (els.secDb) {
+      els.secDb.textContent = dbInfo.label || "Banco";
+      els.secDb.className =
+        "sec-badge" +
+        (dbInfo.kind === "ok" ? " is-ok" : dbInfo.kind === "warn" ? " is-warn" : dbInfo.kind === "bad" ? " is-bad" : "");
+    }
   }
 
   function toast(message) {
+    if (!els.toast) return;
     els.toast.textContent = message;
     els.toast.classList.add("is-on");
     clearTimeout(toastTimer);
@@ -191,8 +208,23 @@
   }
 
   function parseISODate(iso) {
-    const [y, m, d] = iso.split("-").map(Number);
+    const [y, m, d] = String(iso || "").slice(0, 10).split("-").map(Number);
     return new Date(y, m - 1, d);
+  }
+
+  function txDate(t) {
+    return String(t && t.occurred_on ? t.occurred_on : "").slice(0, 10);
+  }
+
+  function normalizeTx(t) {
+    return Object.assign({}, t, {
+      occurred_on: txDate(t),
+      amount: Number(t.amount)
+    });
+  }
+
+  function setDbInfo(kind, label) {
+    dbInfo = { kind: kind || "", label: label || "Banco" };
   }
 
   function plural(n, one, many) {
@@ -264,6 +296,21 @@
       .replace(/^https?:\/\//, "")
       .split("/")[0];
     return `${login}@${host}`;
+  }
+
+  function loginEmails(login) {
+    if (String(login).includes("@")) return [login];
+    return [...new Set([loginToEmail(login), `${login}@login.finora.app`])];
+  }
+
+  async function signInWithLogin(login, password) {
+    let lastError = null;
+    for (const email of loginEmails(login)) {
+      const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
+      if (!error) return { data, error: null };
+      lastError = error;
+    }
+    return { data: null, error: lastError };
   }
 
   function demoDay(day) {
@@ -345,9 +392,11 @@
   async function fetchMonth() {
     const { start, end } = monthRange(cursor);
     if (demoMode) {
-      transactions = demoState()
-        .transactions.filter((t) => t.occurred_on >= start && t.occurred_on <= end)
+      allUserTransactions = demoState().transactions.map(normalizeTx);
+      transactions = allUserTransactions
+        .filter((t) => t.occurred_on >= start && t.occurred_on <= end)
         .sort((a, b) => (a.occurred_on < b.occurred_on ? 1 : a.occurred_on > b.occurred_on ? -1 : 0));
+      setDbInfo("warn", "Banco local");
       renderApp();
       return;
     }
@@ -356,21 +405,49 @@
       throw new Error("Sessão expirada. Entre de novo.");
     }
 
-    const { data, error } = await supabaseClient
+    let result = await supabaseClient
       .from("transactions")
       .select("*")
       .eq("user_id", currentUser.id)
-      .gte("occurred_on", start)
-      .lte("occurred_on", end)
-      .order("occurred_on", { ascending: false })
-      .order("created_at", { ascending: false });
+      .order("occurred_on", { ascending: false });
 
-    if (error) {
-      transactions = [];
-      renderApp();
-      throw new Error(error.message || "Não foi possível ler os lançamentos.");
+    if (result.error) {
+      result = await supabaseClient.from("transactions").select("*").order("occurred_on", { ascending: false });
     }
-    transactions = data || [];
+
+    if (result.error) {
+      allUserTransactions = [];
+      transactions = [];
+      const msg = result.error.message || "Não foi possível ler os lançamentos.";
+      const lower = msg.toLowerCase();
+      if (lower.includes("relation") || lower.includes("schema cache") || lower.includes("does not exist")) {
+        setDbInfo("bad", "Falta o schema");
+      } else if (lower.includes("permission") || lower.includes("rls") || lower.includes("denied")) {
+        setDbInfo("bad", "Sem permissão");
+      } else {
+        setDbInfo("bad", "Banco: erro");
+      }
+      renderApp();
+      throw new Error(msg);
+    }
+
+    allUserTransactions = (result.data || [])
+      .map(normalizeTx)
+      .filter((t) => !t.user_id || t.user_id === currentUser.id);
+    transactions = allUserTransactions
+      .filter((t) => t.occurred_on >= start && t.occurred_on <= end)
+      .sort((a, b) => {
+        if (a.occurred_on !== b.occurred_on) return a.occurred_on < b.occurred_on ? 1 : -1;
+        return String(a.created_at || "") < String(b.created_at || "") ? 1 : -1;
+      });
+
+    if (!allUserTransactions.length) {
+      setDbInfo("ok", "Banco conectado");
+    } else if (!transactions.length) {
+      setDbInfo("ok", `${allUserTransactions.length} no banco`);
+    } else {
+      setDbInfo("ok", `${transactions.length} neste mês`);
+    }
     renderApp();
   }
 
@@ -445,7 +522,9 @@
     els.sumExpenseCount.textContent = plural(expenseItems.length, "lançamento", "lançamentos");
 
     if (income === 0 && expense === 0) {
-      els.sumInsight.textContent = "Comece registrando um lançamento.";
+      els.sumInsight.textContent = allUserTransactions.length
+        ? "Não há lançamentos neste mês. Use as setas para ver outros meses."
+        : "Comece registrando um lançamento.";
     } else if (balance >= 0) {
       els.sumInsight.textContent = "Você fechou o mês no positivo.";
     } else {
@@ -461,38 +540,42 @@
     }
   }
 
-  function renderList() {
-    const items = filteredTransactions();
-    els.txList.innerHTML = "";
-
+  function fillTxList(container, items, withDays) {
+    container.innerHTML = "";
     if (!items.length) {
       const empty = document.createElement("div");
       empty.className = "empty";
       empty.textContent = transactions.length
         ? "Nenhum lançamento com esses filtros."
-        : "Nenhum lançamento neste mês.";
-      els.txList.appendChild(empty);
+        : allUserTransactions.length
+          ? "Nenhum lançamento neste mês."
+          : "Nenhum lançamento neste mês.";
+      container.appendChild(empty);
       return;
     }
 
     let lastDay = "";
     items.forEach((t) => {
-      if (t.occurred_on !== lastDay) {
-        lastDay = t.occurred_on;
+      const dayKey = txDate(t);
+      if (withDays && dayKey !== lastDay) {
+        lastDay = dayKey;
         const day = document.createElement("div");
         day.className = "tx-day";
-        day.textContent = parseISODate(t.occurred_on).toLocaleDateString("pt-BR", {
+        day.textContent = parseISODate(dayKey).toLocaleDateString("pt-BR", {
           weekday: "long",
           day: "2-digit",
           month: "short"
         });
-        els.txList.appendChild(day);
+        container.appendChild(day);
       }
 
       const btn = document.createElement("button");
       btn.type = "button";
       btn.className = "tx-item";
-      btn.addEventListener("click", () => openModal(t));
+      btn.addEventListener("click", () => {
+        closeListModal();
+        openModal(t);
+      });
 
       const icon = document.createElement("span");
       icon.className = "tx-icon";
@@ -510,8 +593,32 @@
       value.textContent = `${t.type === "income" ? "+" : "−"} ${formatBRL(t.amount)}`;
 
       btn.append(icon, info, value);
-      els.txList.appendChild(btn);
+      container.appendChild(btn);
     });
+  }
+
+  function renderList() {
+    const items = filteredTransactions();
+    fillTxList(els.txList, items.slice(0, LIST_PREVIEW), false);
+    if (els.btnTxMore) {
+      const extra = items.length - LIST_PREVIEW;
+      els.btnTxMore.classList.toggle("hidden", extra <= 0);
+      els.btnTxMore.textContent =
+        extra > 0 ? `Ver todos os ${items.length} lançamentos` : "Ver todos os lançamentos";
+    }
+    if (els.modalList && !els.modalList.classList.contains("hidden") && els.txListFull) {
+      fillTxList(els.txListFull, items, true);
+    }
+  }
+
+  function openListModal() {
+    if (!els.modalList || !els.txListFull) return;
+    fillTxList(els.txListFull, filteredTransactions(), true);
+    els.modalList.classList.remove("hidden");
+  }
+
+  function closeListModal() {
+    if (els.modalList) els.modalList.classList.add("hidden");
   }
 
   function renderBreakdown(expenseItems, total) {
@@ -531,6 +638,7 @@
 
     Object.entries(map)
       .sort((a, b) => b[1] - a[1])
+      .slice(0, 5)
       .forEach(([cat, amount]) => {
         const row = document.createElement("div");
         row.className = "bar-row";
@@ -612,7 +720,7 @@
     fillCategories(els.txCategory, type, tx?.category);
     els.txAmount.value = tx ? Number(tx.amount).toFixed(2).replace(".", ",") : "";
     els.txDescription.value = tx?.description || "";
-    els.txDate.value = tx?.occurred_on || toISODate(new Date());
+    els.txDate.value = tx ? txDate(tx) : toISODate(new Date());
     els.modal.classList.remove("hidden");
     els.txAmount.focus();
   }
@@ -623,17 +731,25 @@
 
   async function enterApp(user) {
     currentUser = user;
+    currentName =
+      (user && user.user_metadata && user.user_metadata.name) ||
+      String((user && user.email) || "Usuário").split("@")[0];
+    showView("app");
+    setLoading(false);
+    renderSecurity();
+    try {
+      renderApp();
+    } catch (err) {
+      console.error(err);
+    }
     try {
       currentName = await loadProfile(user);
+      renderApp();
     } catch (err) {
-      currentName = (user.user_metadata && user.user_metadata.name) || "Usuário";
       toast(String(err.message || "").includes("relation")
         ? "Execute o arquivo sql/schema.sql no Supabase para salvar lançamentos."
         : (err.message || "Perfil incompleto, mas você pode continuar."));
     }
-    showView("app");
-    renderSecurity();
-    renderApp();
     await safeFetch();
   }
 
@@ -698,10 +814,7 @@
       const button = document.getElementById("btn-login");
       busy(button, true);
       setAuthMessage("");
-      const { error } = await supabaseClient.auth.signInWithPassword({
-        email: loginToEmail(login),
-        password: document.getElementById("login-password").value
-      });
+      const { error } = await signInWithLogin(login, document.getElementById("login-password").value);
       busy(button, false);
       if (error) setAuthMessage(friendlyAuthError(error), true);
     });
@@ -784,10 +897,19 @@
     els.filterType.addEventListener("change", renderList);
     els.filterCategory.addEventListener("change", renderList);
     document.getElementById("btn-export").addEventListener("click", exportCsv);
+    if (els.btnTxMore) els.btnTxMore.addEventListener("click", openListModal);
+    const btnCloseList = document.getElementById("btn-close-list");
+    if (btnCloseList) btnCloseList.addEventListener("click", closeListModal);
+    if (els.modalList) {
+      els.modalList.addEventListener("click", (e) => {
+        if (e.target === els.modalList) closeListModal();
+      });
+    }
 
     document.addEventListener("keydown", (e) => {
       if (e.key !== "Escape") return;
       els.confirm.classList.add("hidden");
+      closeListModal();
       closeModal();
     });
 
@@ -904,8 +1026,23 @@
     return text;
   }
 
+  function withTimeout(promise, ms) {
+    return Promise.race([
+      promise,
+      new Promise(function (_, reject) {
+        setTimeout(function () {
+          reject(new Error("timeout"));
+        }, ms);
+      })
+    ]);
+  }
+
   async function init() {
-    bindEvents();
+    try {
+      bindEvents();
+    } catch (err) {
+      console.error(err);
+    }
 
     if (!isConfigured()) {
       setLoading(false);
@@ -917,9 +1054,10 @@
       return;
     }
 
+    showView("auth");
+    setLoading(false);
+
     if (!window.supabase || !window.supabase.createClient) {
-      setLoading(false);
-      showView("auth");
       setAuthMessage("Não foi possível carregar o serviço de login. Recarregue a página.", true);
       return;
     }
@@ -937,8 +1075,6 @@
         }
       );
     } catch (err) {
-      setLoading(false);
-      showView("auth");
       setAuthMessage(err.message || "Erro ao conectar no Supabase.", true);
       return;
     }
@@ -970,23 +1106,22 @@
         await openSession(null);
         return;
       }
-      if (event === "TOKEN_REFRESHED" || event === "USER_UPDATED") return;
+      if (event === "TOKEN_REFRESHED" || event === "USER_UPDATED" || event === "INITIAL_SESSION") return;
       if (session && session.user) {
         await openSession(session.user);
-        return;
-      }
-      if (event === "INITIAL_SESSION") {
-        await openSession(null);
       }
     });
 
     try {
-      const { data } = await supabaseClient.auth.getSession();
-      await openSession(data && data.session ? data.session.user : null);
+      const result = await withTimeout(supabaseClient.auth.getSession(), 4000);
+      const user = result && result.data && result.data.session ? result.data.session.user : null;
+      if (user) await openSession(user);
     } catch (err) {
       showView("auth");
       showAuthTab("login");
-      setAuthMessage(err.message || "Não foi possível verificar a sessão.", true);
+      if (err && err.message !== "timeout") {
+        setAuthMessage(err.message || "Não foi possível verificar a sessão.", true);
+      }
     } finally {
       setLoading(false);
     }
@@ -1000,5 +1135,11 @@
     toast((reason && reason.message) || "Falha ao salvar ou carregar dados.");
   });
 
-  init();
+  try {
+    init();
+  } catch (err) {
+    showView("auth");
+    setLoading(false);
+    setAuthMessage((err && err.message) || "Não foi possível iniciar o Finora.", true);
+  }
 })();
