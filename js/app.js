@@ -47,7 +47,7 @@
   ];
 
   const DEMO_STORE = "finora-demo-v1";
-  const LIST_PREVIEW = 8;
+  const LIST_PREVIEW = 5;
 
   const els = {
     loading: document.getElementById("loading"),
