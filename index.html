@@ -2,6 +2,13 @@
 <html lang="pt-BR">
   <head>
     <meta charset="UTF-8" />
+    <script>
+      (function () {
+        var path = location.pathname;
+        if (path.endsWith("/") || /\.[a-z0-9]+$/i.test(path)) return;
+        location.replace(path + "/" + location.search + location.hash);
+      })();
+    </script>
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <meta name="theme-color" content="#f4f1eb" />
     <meta name="description" content="Finora — controle de gastos pessoal, simples e seguro." />
@@ -265,7 +272,7 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4"></script>
-    <script src="js/config.js?v=6"></script>
-    <script src="js/app.js?v=6"></script>
+    <script src="js/config.js?v=7"></script>
+    <script src="js/app.js?v=7"></script>
   </body>
 </html>

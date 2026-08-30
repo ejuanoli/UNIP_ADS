@@ -912,17 +912,35 @@
       return;
     }
 
-    supabaseClient = window.supabase.createClient(
-      window.APP_CONFIG.supabaseUrl,
-      window.APP_CONFIG.supabaseAnonKey,
-      {
-        auth: {
-          persistSession: true,
-          autoRefreshToken: true,
-          detectSessionInUrl: false
+    if (!window.supabase || !window.supabase.createClient) {
+      setLoading(false);
+      showView("auth");
+      setAuthMessage("Não foi possível carregar o serviço de login. Recarregue a página.", true);
+      return;
+    }
+
+    try {
+      supabaseClient = window.supabase.createClient(
+        window.APP_CONFIG.supabaseUrl,
+        window.APP_CONFIG.supabaseAnonKey,
+        {
+          auth: {
+            persistSession: true,
+            autoRefreshToken: true,
+            detectSessionInUrl: false
+          }
         }
-      }
-    );
+      );
+    } catch (err) {
+      setLoading(false);
+      showView("auth");
+      setAuthMessage(err.message || "Erro ao conectar no Supabase.", true);
+      return;
+    }
+
+    window.setTimeout(function () {
+      setLoading(false);
+    }, 2500);
 
     supabaseClient.auth.onAuthStateChange(async (event, session) => {
       if (event === "TOKEN_REFRESHED" || event === "USER_UPDATED") return;
@@ -936,19 +954,45 @@
         return;
       }
 
-      if (!session?.user) return;
+      if (!session?.user) {
+        setLoading(false);
+        return;
+      }
 
+      showView("app");
+      setLoading(false);
       try {
         await enterApp(session.user);
       } catch (err) {
         const msg = err.message || "Erro ao abrir sua conta.";
         toast(msg.includes("relation") ? "Execute o arquivo sql/schema.sql no Supabase." : msg);
-        showView("app");
-        renderSecurity();
-      } finally {
-        setLoading(false);
+        showView("auth");
+        showAuthTab("login");
       }
     });
+
+    try {
+      const { data } = await Promise.race([
+        supabaseClient.auth.getSession(),
+        new Promise(function (resolve) {
+          setTimeout(function () {
+            resolve({ data: { session: null } });
+          }, 2000);
+        })
+      ]);
+      if (data && data.session && data.session.user) {
+        showView("app");
+      } else {
+        showView("auth");
+        showAuthTab("login");
+      }
+    } catch (err) {
+      showView("auth");
+      showAuthTab("login");
+      setAuthMessage(err.message || "Não foi possível verificar a sessão.", true);
+    } finally {
+      setLoading(false);
+    }
   }
 
   window.addEventListener("error", (event) => {
