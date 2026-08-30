@@ -212,6 +212,12 @@
     return new Date(y, m - 1, d);
   }
 
+  function formatShortDate(iso) {
+    const date = parseISODate(iso);
+    if (Number.isNaN(date.getTime())) return "";
+    return date.toLocaleDateString("pt-BR");
+  }
+
   function txDate(t) {
     return String(t && t.occurred_on ? t.occurred_on : "").slice(0, 10);
   }
@@ -588,11 +594,17 @@
       meta.textContent = t.category;
       info.append(title, meta);
 
+      const right = document.createElement("span");
+      right.className = "tx-right";
+      const dateEl = document.createElement("small");
+      dateEl.className = "tx-date";
+      dateEl.textContent = formatShortDate(dayKey);
       const value = document.createElement("strong");
       value.className = t.type === "income" ? "is-income" : "is-expense";
       value.textContent = `${t.type === "income" ? "+" : "−"} ${formatBRL(t.amount)}`;
+      right.append(dateEl, value);
 
-      btn.append(icon, info, value);
+      btn.append(icon, info, right);
       container.appendChild(btn);
     });
   }
