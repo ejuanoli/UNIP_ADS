@@ -71,9 +71,8 @@ a {
 }
 
 #view-app {
-  height: 100vh;
-  height: 100dvh;
-  overflow: hidden;
+  min-height: 100vh;
+  min-height: 100dvh;
 }
 
 #view-setup {
@@ -704,30 +703,23 @@ select:focus {
   grid-template-columns: minmax(0, 2.2fr) minmax(300px, 0.9fr);
   gap: 12px;
   padding-bottom: 8px;
-  align-items: stretch;
-  flex: 1;
-  min-height: 0;
+  align-items: start;
 }
 
 .side {
   display: grid;
   gap: 12px;
-  min-height: 0;
-  grid-template-rows: 1fr 1fr;
 }
 
 .panel {
   padding: 12px;
-  min-height: 0;
   display: flex;
   flex-direction: column;
-  height: 100%;
 }
 
 .panel-main {
   display: flex;
   flex-direction: column;
-  height: 100%;
 }
 
 .panel-head {
@@ -760,16 +752,11 @@ select:focus {
   display: flex;
   flex-direction: column;
   gap: 6px;
-  min-height: 0;
-  flex: 1;
-  justify-content: flex-start;
-  overflow: auto;
 }
 
 .tx-more {
-  margin-top: auto;
-  padding: 8px 0 0;
-  flex-shrink: 0;
+  margin-top: 8px;
+  padding: 0;
 }
 
 .tx-day {
