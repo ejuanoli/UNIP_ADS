@@ -181,12 +181,20 @@
     currentUser = null;
     transactions = [];
     allUserTransactions = [];
-    try {
-      if (supabaseClient) await supabaseClient.auth.signOut({ scope: "local" });
-    } catch (err) {
-      /* ignore */
-    }
     clearAuthStorage();
+    if (supabaseClient) {
+      try {
+        supabaseClient.auth.signOut({ scope: "local" });
+      } catch (err) {
+        /* ignore */
+      }
+    }
+  }
+
+  function goToLogin() {
+    setLoading(false);
+    showView("auth");
+    showAuthTab("login");
   }
 
   function renderSecurity() {
@@ -928,14 +936,13 @@
         currentUser = null;
         transactions = [];
         allUserTransactions = [];
-        showView("auth");
-        showAuthTab("login");
+        goToLogin();
         setAuthMessage("Demonstração: entre de novo para continuar olhando o site.");
         return;
       }
       await endSession();
-      showView("auth");
-      showAuthTab("login");
+      goToLogin();
+      location.reload();
     });
 
     document.getElementById("btn-prev-month").addEventListener("click", async () => {
@@ -1125,8 +1132,6 @@
       return;
     }
 
-    clearAuthStorage(window.localStorage);
-
     try {
       supabaseClient = window.supabase.createClient(
         window.APP_CONFIG.supabaseUrl,
@@ -1135,8 +1140,7 @@
           auth: {
             persistSession: true,
             autoRefreshToken: true,
-            detectSessionInUrl: false,
-            storage: window.sessionStorage
+            detectSessionInUrl: false
           }
         }
       );
@@ -1155,9 +1159,7 @@
         currentUser = null;
         transactions = [];
         allUserTransactions = [];
-        showView("auth");
-        showAuthTab("login");
-        setLoading(false);
+        goToLogin();
         return;
       }
       if (openedFor === user.id && currentUser && currentUser.id === user.id) {
@@ -1196,12 +1198,7 @@
     async function resolveBootUser() {
       const { data } = await supabaseClient.auth.getSession();
       if (!data || !data.session || !data.session.user) return null;
-      const check = await supabaseClient.auth.getUser();
-      if (check.error || !check.data || !check.data.user) {
-        await endSession();
-        return null;
-      }
-      return check.data.user;
+      return data.session.user;
     }
 
     setTimeout(function () {
@@ -1210,26 +1207,19 @@
         return;
       }
       booted = true;
-      showView("auth");
-      showAuthTab("login");
-      setLoading(false);
-    }, 5000);
+      goToLogin();
+    }, 4000);
 
     try {
       const user = await resolveBootUser();
       await finishBoot(user);
     } catch (err) {
-      if (!booted && !currentUser) {
-        showView("auth");
-        showAuthTab("login");
+      if (!currentUser) {
+        goToLogin();
         setAuthMessage(err.message || "Não foi possível verificar a sessão.", true);
       }
     } finally {
-      if (!booted && !currentUser) {
-        booted = true;
-        showView("auth");
-        showAuthTab("login");
-      }
+      if (!currentUser) goToLogin();
       setLoading(false);
     }
   }
