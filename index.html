@@ -20,7 +20,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="css/styles.css?v=24" />
+    <link rel="stylesheet" href="css/styles.css?v=26" />
     <style>
       html, body { margin: 0; min-height: 100vh; background: #f4f1eb; }
       .hidden { display: none !important; }
@@ -158,11 +158,6 @@
               <span id="greeting">Olá</span>
             </div>
           </div>
-          <div class="sec-indicators" aria-label="Indicadores de segurança">
-            <span id="sec-site" class="sec-badge">Dados criptografados</span>
-            <span id="sec-user" class="sec-badge">Banco de dados conectado</span>
-            <span id="sec-db" class="sec-badge">Lançamentos</span>
-          </div>
           <div class="topbar-end">
             <div class="topbar-actions">
               <button type="button" class="header-action btn btn-ghost" id="btn-export" aria-label="Exportar">
@@ -184,6 +179,11 @@
       <p id="demo-banner" class="demo-banner hidden">Demonstração local — os dados ficam só neste navegador.</p>
 
       <main class="app">
+        <div class="sec-indicators" aria-label="Indicadores de segurança">
+          <span id="sec-site" class="sec-badge">Dados criptografados</span>
+          <span id="sec-user" class="sec-badge">Banco de dados conectado</span>
+          <span id="sec-db" class="sec-badge">Lançamentos</span>
+        </div>
         <div class="month-nav">
           <button type="button" class="icon-btn" id="btn-prev-month" aria-label="Mês anterior">‹</button>
           <h2 id="month-label">Agosto 2026</h2>

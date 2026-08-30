@@ -365,10 +365,10 @@ select:focus {
 }
 
 .topbar-inner {
-  display: grid;
-  grid-template-columns: auto 1fr auto;
+  display: flex;
   align-items: center;
-  gap: 16px;
+  justify-content: space-between;
+  gap: 12px;
 }
 
 .topbar-end {
@@ -401,12 +401,11 @@ select:focus {
 .sec-indicators {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 6px;
   width: auto;
-  max-width: none;
-  margin: 0;
+  margin: 0 0 10px;
   padding: 0;
-  justify-content: center;
+  justify-content: flex-start;
 }
 
 .sec-badge {
@@ -1081,7 +1080,8 @@ body.modal-open .fab {
   }
 
   .topbar-inner {
-    grid-template-columns: 1fr auto;
+    display: flex;
+    flex-wrap: nowrap;
     gap: 8px;
     padding-top: 8px;
     padding-bottom: 8px;
@@ -1109,10 +1109,8 @@ body.modal-open .fab {
   }
 
   .sec-indicators {
-    grid-column: 1 / -1;
     justify-content: flex-start;
-    width: auto;
-    padding: 0;
+    margin-bottom: 8px;
     gap: 6px;
   }
 
