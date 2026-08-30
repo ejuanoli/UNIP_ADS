@@ -17,7 +17,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="css/styles.css?v=14" />
+    <link rel="stylesheet" href="css/styles.css?v=15" />
     <style>
       html, body { margin: 0; min-height: 100vh; background: #f4f1eb; }
       .hidden { display: none !important; }
@@ -52,7 +52,7 @@
     </section>
 
     <!-- Login / cadastro -->
-    <section id="view-auth" class="view">
+    <section id="view-auth" class="view hidden">
       <div class="auth-shell">
         <div class="auth-intro">
           <div class="brand-lockup brand-lockup-lg">
@@ -321,24 +321,13 @@
       <p class="lead" style="padding: 24px">Ative o JavaScript para usar o Finora.</p>
     </noscript>
 
-    <div id="loading" class="loading hidden">
+    <div id="loading" class="loading">
       <span class="spinner" aria-hidden="true"></span>
       <p>Carregando…</p>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4"></script>
-    <script src="js/config.js?v=14"></script>
-    <script src="js/app.js?v=14"></script>
-    <script>
-      setTimeout(function () {
-        var auth = document.getElementById("view-auth");
-        var app = document.getElementById("view-app");
-        var loading = document.getElementById("loading");
-        var authOn = auth && !auth.classList.contains("hidden");
-        var appOn = app && !app.classList.contains("hidden");
-        if (loading) loading.classList.add("hidden");
-        if (!authOn && !appOn && auth) auth.classList.remove("hidden");
-      }, 2000);
-    </script>
+    <script src="js/config.js?v=15"></script>
+    <script src="js/app.js?v=15"></script>
   </body>
 </html>

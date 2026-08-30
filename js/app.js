@@ -734,23 +734,16 @@
     currentName =
       (user && user.user_metadata && user.user_metadata.name) ||
       String((user && user.email) || "Usuário").split("@")[0];
-    showView("app");
-    setLoading(false);
-    renderSecurity();
-    try {
-      renderApp();
-    } catch (err) {
-      console.error(err);
-    }
     try {
       currentName = await loadProfile(user);
-      renderApp();
     } catch (err) {
       toast(String(err.message || "").includes("relation")
         ? "Execute o arquivo sql/schema.sql no Supabase para salvar lançamentos."
         : (err.message || "Perfil incompleto, mas você pode continuar."));
     }
     await safeFetch();
+    showView("app");
+    setLoading(false);
   }
 
   function busy(button, on) {
@@ -1026,17 +1019,6 @@
     return text;
   }
 
-  function withTimeout(promise, ms) {
-    return Promise.race([
-      promise,
-      new Promise(function (_, reject) {
-        setTimeout(function () {
-          reject(new Error("timeout"));
-        }, ms);
-      })
-    ]);
-  }
-
   async function init() {
     try {
       bindEvents();
@@ -1054,10 +1036,9 @@
       return;
     }
 
-    showView("auth");
-    setLoading(false);
-
     if (!window.supabase || !window.supabase.createClient) {
+      setLoading(false);
+      showView("auth");
       setAuthMessage("Não foi possível carregar o serviço de login. Recarregue a página.", true);
       return;
     }
@@ -1075,16 +1056,20 @@
         }
       );
     } catch (err) {
+      setLoading(false);
+      showView("auth");
       setAuthMessage(err.message || "Erro ao conectar no Supabase.", true);
       return;
     }
 
     let openedFor = "";
+    let booted = false;
 
     async function openSession(user) {
       if (!user) {
         currentUser = null;
         transactions = [];
+        allUserTransactions = [];
         showView("auth");
         showAuthTab("login");
         setLoading(false);
@@ -1096,33 +1081,48 @@
         return;
       }
       openedFor = user.id;
-      setLoading(false);
       await enterApp(user);
     }
 
+    async function finishBoot(user) {
+      if (booted) return;
+      booted = true;
+      await openSession(user || null);
+    }
+
     supabaseClient.auth.onAuthStateChange(async (event, session) => {
+      if (event === "INITIAL_SESSION") {
+        await finishBoot(session && session.user);
+        return;
+      }
       if (event === "SIGNED_OUT") {
         openedFor = "";
+        booted = true;
         await openSession(null);
         return;
       }
-      if (event === "TOKEN_REFRESHED" || event === "USER_UPDATED" || event === "INITIAL_SESSION") return;
-      if (session && session.user) {
+      if (event === "TOKEN_REFRESHED" || event === "USER_UPDATED") return;
+      if (event === "SIGNED_IN" && session && session.user) {
+        booted = true;
         await openSession(session.user);
       }
     });
 
     try {
-      const result = await withTimeout(supabaseClient.auth.getSession(), 4000);
-      const user = result && result.data && result.data.session ? result.data.session.user : null;
-      if (user) await openSession(user);
+      const { data } = await supabaseClient.auth.getSession();
+      await finishBoot(data && data.session ? data.session.user : null);
     } catch (err) {
-      showView("auth");
-      showAuthTab("login");
-      if (err && err.message !== "timeout") {
+      if (!booted && !currentUser) {
+        showView("auth");
+        showAuthTab("login");
         setAuthMessage(err.message || "Não foi possível verificar a sessão.", true);
       }
     } finally {
+      if (!booted && !currentUser) {
+        booted = true;
+        showView("auth");
+        showAuthTab("login");
+      }
       setLoading(false);
     }
   }
