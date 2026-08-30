@@ -112,13 +112,13 @@ code {
 
 /* Auth */
 .auth-shell {
-  max-width: 1040px;
+  max-width: 1200px;
   margin: 0 auto;
-  min-height: 100vh;
+  min-height: auto;
   display: grid;
   align-items: center;
   gap: 48px;
-  padding: 40px 24px;
+  padding: 40px 24px 24px;
 }
 
 @media (min-width: 880px) {
@@ -306,10 +306,12 @@ select:focus {
 }
 
 .topbar-inner,
-.app {
-  max-width: 1180px;
+.app,
+.site-footer-inner {
+  width: min(1600px, calc(100% - 40px));
+  max-width: none;
   margin: 0 auto;
-  padding: 12px 20px;
+  padding: 14px 0;
 }
 
 .topbar-inner {
@@ -628,10 +630,14 @@ select:focus {
 
 .workspace {
   display: grid;
-  grid-template-columns: minmax(0, 1.7fr) minmax(280px, 0.85fr);
-  gap: 12px;
-  padding-bottom: 28px;
+  grid-template-columns: minmax(0, 2.2fr) minmax(320px, 0.9fr);
+  gap: 16px;
+  padding-bottom: 16px;
   align-items: start;
+}
+
+.panel-main {
+  min-height: 520px;
 }
 
 .side {
@@ -644,7 +650,7 @@ select:focus {
 }
 
 .panel-main {
-  min-height: 420px;
+  min-height: 520px;
 }
 
 .panel-head {
@@ -812,6 +818,53 @@ select:focus {
   margin-top: 8px;
 }
 
+.site-footer {
+  margin-top: 8px;
+  padding: 20px 0 28px;
+  border-top: 1px solid var(--border);
+  background: rgba(255, 253, 249, 0.7);
+}
+
+.site-footer-inner {
+  padding-top: 8px;
+  padding-bottom: 8px;
+}
+
+.site-footer h2 {
+  font-size: 1.05rem;
+  margin-bottom: 8px;
+}
+
+.site-footer p {
+  margin: 0 0 12px;
+  color: var(--text-muted);
+  font-size: 0.92rem;
+  max-width: 72rem;
+}
+
+.credits {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px 16px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.credits li {
+  background: var(--surface);
+  border-radius: 12px;
+  padding: 10px 12px;
+  box-shadow: var(--shadow);
+  font-size: 0.9rem;
+}
+
+.credits small {
+  display: block;
+  color: var(--text-muted);
+  font-size: 0.78rem;
+}
+
 .toast {
   position: fixed;
   left: 50%;
@@ -865,10 +918,16 @@ select:focus {
     grid-template-columns: 1fr;
   }
 
+  .credits {
+    grid-template-columns: 1fr;
+  }
+
   .topbar-inner,
-  .app {
-    padding-left: 14px;
-    padding-right: 14px;
+  .app,
+  .site-footer-inner {
+    width: calc(100% - 28px);
+    padding-left: 0;
+    padding-right: 0;
   }
 
   .topbar-inner {
