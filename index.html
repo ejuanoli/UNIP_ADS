@@ -10,6 +10,9 @@
       })();
     </script>
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
     <meta name="theme-color" content="#f4f1eb" />
     <meta name="description" content="Finora — controle de gastos pessoal, simples e seguro." />
     <title>Finora — controle de gastos</title>
@@ -17,7 +20,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="css/styles.css?v=19" />
+    <link rel="stylesheet" href="css/styles.css?v=20" />
     <style>
       html, body { margin: 0; min-height: 100vh; background: #f4f1eb; }
       .hidden { display: none !important; }
@@ -272,34 +275,39 @@
           <h3 id="modal-title">Novo lançamento</h3>
           <button type="button" class="icon-btn" id="btn-close-modal" aria-label="Fechar">×</button>
         </div>
-        <form id="form-tx">
+        <form id="form-tx" class="tx-form">
           <input type="hidden" id="tx-id" />
           <div class="type-toggle" role="group" aria-label="Tipo">
-            <label class="choice">
+            <label class="choice choice-expense">
               <input type="radio" name="tx-type" value="expense" checked />
               <span>Saída</span>
             </label>
-            <label class="choice">
+            <label class="choice choice-income">
               <input type="radio" name="tx-type" value="income" />
               <span>Entrada</span>
             </label>
           </div>
-          <label>
+          <label class="tx-amount-field">
             Valor
-            <input type="text" id="tx-amount" inputmode="decimal" required placeholder="0,00" />
+            <span class="tx-amount-box">
+              <span class="tx-amount-prefix">R$</span>
+              <input type="text" id="tx-amount" inputmode="decimal" required placeholder="0,00" />
+            </span>
           </label>
-          <label>
-            Categoria
-            <select id="tx-category" required></select>
-          </label>
-          <label>
-            Descrição
-            <input type="text" id="tx-description" maxlength="120" placeholder="Ex.: mercado da semana" />
-          </label>
-          <label>
-            Data
-            <input type="date" id="tx-date" required />
-          </label>
+          <div class="tx-form-fields">
+            <label>
+              Categoria
+              <select id="tx-category" required></select>
+            </label>
+            <label>
+              Descrição
+              <input type="text" id="tx-description" maxlength="120" placeholder="Ex.: mercado da semana" />
+            </label>
+            <label>
+              Data
+              <input type="date" id="tx-date" required />
+            </label>
+          </div>
           <div class="modal-actions">
             <button type="button" class="btn btn-ghost hidden" id="btn-delete-tx">Excluir</button>
             <button type="submit" class="btn btn-primary" id="btn-save-tx">Salvar</button>
@@ -339,7 +347,7 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4"></script>
-    <script src="js/config.js?v=19"></script>
-    <script src="js/app.js?v=19"></script>
+    <script src="js/config.js?v=20"></script>
+    <script src="js/app.js?v=20"></script>
   </body>
 </html>

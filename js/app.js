@@ -124,6 +124,38 @@
     if (els.loading) els.loading.classList.toggle("hidden", !on);
   }
 
+  let scrollLockY = 0;
+
+  function isAnyModalOpen() {
+    return Boolean(
+      (els.modal && !els.modal.classList.contains("hidden")) ||
+        (els.modalList && !els.modalList.classList.contains("hidden")) ||
+        (els.confirm && !els.confirm.classList.contains("hidden"))
+    );
+  }
+
+  function syncScrollLock() {
+    const open = isAnyModalOpen();
+    if (open && !document.body.classList.contains("modal-open")) {
+      scrollLockY = window.scrollY || 0;
+      document.body.classList.add("modal-open");
+      document.body.style.top = "-" + scrollLockY + "px";
+    } else if (!open && document.body.classList.contains("modal-open")) {
+      document.body.classList.remove("modal-open");
+      document.body.style.top = "";
+      window.scrollTo(0, scrollLockY);
+    }
+  }
+
+  function clearBrowserCache() {
+    if (!window.caches || !caches.keys) return;
+    caches.keys().then(function (keys) {
+      keys.forEach(function (key) {
+        caches.delete(key);
+      });
+    });
+  }
+
   function renderSecurity() {
     if (!els.secSite || !els.secUser) return;
     const host = location.hostname;
@@ -627,10 +659,12 @@
     if (!els.modalList || !els.txListFull) return;
     fillTxList(els.txListFull, filteredTransactions(), true);
     els.modalList.classList.remove("hidden");
+    syncScrollLock();
   }
 
   function closeListModal() {
     if (els.modalList) els.modalList.classList.add("hidden");
+    syncScrollLock();
   }
 
   function renderBreakdown(expenseItems, total) {
@@ -734,11 +768,13 @@
     els.txDescription.value = tx?.description || "";
     els.txDate.value = tx ? txDate(tx) : toISODate(new Date());
     els.modal.classList.remove("hidden");
+    syncScrollLock();
     els.txAmount.focus();
   }
 
   function closeModal() {
     els.modal.classList.add("hidden");
+    syncScrollLock();
   }
 
   async function enterApp(user) {
@@ -919,6 +955,7 @@
       els.confirm.classList.add("hidden");
       closeListModal();
       closeModal();
+      syncScrollLock();
     });
 
     els.formTx.addEventListener("submit", async (e) => {
@@ -970,10 +1007,12 @@
     els.btnDeleteTx.addEventListener("click", () => {
       pendingDeleteId = els.txId.value;
       els.confirm.classList.remove("hidden");
+      syncScrollLock();
     });
     document.getElementById("btn-confirm-cancel").addEventListener("click", () => {
       els.confirm.classList.add("hidden");
       pendingDeleteId = null;
+      syncScrollLock();
     });
     document.getElementById("btn-confirm-ok").addEventListener("click", async () => {
       if (!pendingDeleteId) return;
@@ -982,6 +1021,7 @@
         els.confirm.classList.add("hidden");
         pendingDeleteId = null;
         closeModal();
+        syncScrollLock();
         toast("Lançamento excluído.");
         await safeFetch();
       } catch (err) {
@@ -1035,6 +1075,7 @@
   }
 
   async function init() {
+    clearBrowserCache();
     try {
       bindEvents();
     } catch (err) {

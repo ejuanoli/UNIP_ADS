@@ -183,7 +183,37 @@ code {
 }
 
 .auth-form,
-#form-tx {
+.tx-form {
+  display: grid;
+  gap: 14px;
+}
+
+.tx-amount-box {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid var(--border);
+  background: #fff;
+  border-radius: 12px;
+  padding: 0 14px;
+}
+
+.tx-amount-box input {
+  border: 0;
+  padding: 12px 0;
+  box-shadow: none;
+}
+
+.tx-amount-box input:focus {
+  box-shadow: none;
+}
+
+.tx-amount-prefix {
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.tx-form-fields {
   display: grid;
   gap: 14px;
 }
@@ -889,9 +919,27 @@ select:focus {
 }
 
 .choice input:checked + span {
-  background: var(--primary-soft);
-  color: var(--primary-hover);
-  font-weight: 600;
+  font-weight: 700;
+}
+
+.choice-expense input:checked + span {
+  background: #f3cfc8;
+  color: #9a3326;
+}
+
+.choice-income input:checked + span {
+  background: #c8e8de;
+  color: #1f6b58;
+}
+
+body.modal-open {
+  overflow: hidden;
+  position: fixed;
+  width: 100%;
+}
+
+body.modal-open .fab {
+  display: none !important;
 }
 
 .modal-actions {
@@ -1136,6 +1184,8 @@ select:focus {
     padding: 0;
     place-items: stretch;
     align-items: stretch;
+    overflow: hidden;
+    overscroll-behavior: none;
   }
 
   .modal-card,
@@ -1146,12 +1196,93 @@ select:focus {
     max-height: none;
     max-width: none;
     border-radius: 0;
-    padding: 20px 16px;
+    padding: 16px 16px calc(16px + env(safe-area-inset-bottom, 0px));
+    overflow: hidden;
+    overscroll-behavior: none;
+  }
+
+  #modal .modal-card {
+    background: var(--bg);
+  }
+
+  #modal .modal-head h3 {
+    font-size: 1.35rem;
+  }
+
+  .tx-form {
+    flex: 1;
+    min-height: 0;
+    grid-template-rows: auto auto 1fr auto;
+    gap: 16px;
+  }
+
+  .type-toggle {
+    gap: 10px;
+  }
+
+  .choice span {
+    padding: 14px;
+    font-size: 1.05rem;
+    border-radius: 14px;
+  }
+
+  .tx-amount-field {
+    background: var(--surface);
+    border-radius: 16px;
+    padding: 14px 16px;
+    box-shadow: var(--shadow);
+  }
+
+  .tx-amount-box {
+    border: 0;
+    background: transparent;
+    padding: 0;
+  }
+
+  .tx-amount-box input {
+    font-family: var(--display);
+    font-size: 2rem;
+    font-weight: 600;
+    padding: 4px 0 0;
+  }
+
+  .tx-amount-prefix {
+    font-size: 1.1rem;
+    padding-top: 8px;
+  }
+
+  .tx-form-fields {
+    min-height: 0;
+    overflow: hidden;
+    align-content: start;
+    gap: 12px;
+    background: var(--surface);
+    border-radius: 16px;
+    padding: 14px 16px;
+    box-shadow: var(--shadow);
+  }
+
+  .tx-form-fields input,
+  .tx-form-fields select {
+    min-height: 48px;
+  }
+
+  .modal-actions {
+    margin: 0;
+    padding-top: 4px;
+  }
+
+  .modal-actions .btn {
+    flex: 1;
+    min-height: 50px;
+    font-size: 1.05rem;
   }
 
   .tx-list-full {
     flex: 1;
     overflow: auto;
+    overscroll-behavior: contain;
+    touch-action: pan-y;
   }
 
   .auth-shell {
