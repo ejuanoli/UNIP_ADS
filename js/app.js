@@ -156,6 +156,39 @@
     });
   }
 
+  function clearAuthStorage(store) {
+    const stores = store ? [store] : [window.localStorage, window.sessionStorage];
+    stores.forEach(function (target) {
+      if (!target) return;
+      const keys = [];
+      for (let i = 0; i < target.length; i += 1) {
+        const key = target.key(i);
+        if (key) keys.push(key);
+      }
+      keys.forEach(function (key) {
+        if (
+          key.indexOf("sb-") === 0 ||
+          key.indexOf("supabase") === 0 ||
+          key.indexOf("auth-token") !== -1
+        ) {
+          target.removeItem(key);
+        }
+      });
+    });
+  }
+
+  async function endSession() {
+    currentUser = null;
+    transactions = [];
+    allUserTransactions = [];
+    try {
+      if (supabaseClient) await supabaseClient.auth.signOut({ scope: "local" });
+    } catch (err) {
+      /* ignore */
+    }
+    clearAuthStorage();
+  }
+
   function renderSecurity() {
     if (!els.secSite || !els.secUser) return;
     const host = location.hostname;
@@ -891,20 +924,16 @@
     });
 
     document.getElementById("btn-logout").addEventListener("click", async () => {
-      currentUser = null;
-      transactions = [];
-      allUserTransactions = [];
       if (demoMode) {
+        currentUser = null;
+        transactions = [];
+        allUserTransactions = [];
         showView("auth");
         showAuthTab("login");
         setAuthMessage("Demonstração: entre de novo para continuar olhando o site.");
         return;
       }
-      try {
-        if (supabaseClient) await supabaseClient.auth.signOut();
-      } catch (err) {
-        console.error(err);
-      }
+      await endSession();
       showView("auth");
       showAuthTab("login");
     });
@@ -1096,6 +1125,8 @@
       return;
     }
 
+    clearAuthStorage(window.localStorage);
+
     try {
       supabaseClient = window.supabase.createClient(
         window.APP_CONFIG.supabaseUrl,
@@ -1104,7 +1135,8 @@
           auth: {
             persistSession: true,
             autoRefreshToken: true,
-            detectSessionInUrl: false
+            detectSessionInUrl: false,
+            storage: window.sessionStorage
           }
         }
       );
@@ -1166,11 +1198,7 @@
       if (!data || !data.session || !data.session.user) return null;
       const check = await supabaseClient.auth.getUser();
       if (check.error || !check.data || !check.data.user) {
-        try {
-          await supabaseClient.auth.signOut();
-        } catch (err) {
-          /* ignore */
-        }
+        await endSession();
         return null;
       }
       return check.data.user;
